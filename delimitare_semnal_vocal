@@ -89,3 +89,4 @@ end
 index_start=start*220;
 index_stop=stop*220;
 wavwrite(y(index_start:index_stop),Fs, 'cropped.wav')
+%this last line makes a new file, containing only the useful part of the voice signal, called cropped.wav
