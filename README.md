@@ -1,0 +1,4 @@
+voice
+=====
+
+Crop that signal
