@@ -1,0 +1,23 @@
+function [energ,rtz] = en_ntz (x)
+win_len=220;
+len = length(x);
+N=floor(len/win_len);
+sumacurenta = 0;
+signanterior = 0;
+
+for i=1:N
+   energ(i)=0;
+   for j=(i-1)*win_len+1:i*win_len
+        energ(i)=energ(i)+x(j)*x(j);
+        signcurent = sign(x(j));
+            if(signcurent * signanterior) == -1
+            sumacurenta = sumacurenta + 1;
+            end
+            if signcurent ~= 0
+            signanterior = signcurent;
+            end
+   end
+   rtz(i)=sumacurenta;
+   sumacurenta=0;
+end  
+end
