@@ -1,0 +1,90 @@
+function [index_start,index_stop]=delimitare_semnal_vocal(filename);
+
+[y,Fs]=wavread(filename);
+
+%here we calclate the energy of the signal
+[energie,rtz]=en_ntz(y);
+
+figure(1),plot(y);
+figure(2), plot(energie), title('energia semnalului');
+figure(3), plot(rtz), title('rata trecerilor prin zero');
+
+
+lung_energ=length(energie);
+lung_rtz=length(rtz);
+Emedium=sum(energie(1:15))/15;
+RTZmedium=sum(rtz(1:15))/15;
+Emaximum=max(energie(15:lung_energ));
+
+%next we calculate the thresholds
+C1=0.03;
+C2=5;
+C3=3;
+I1=C1*(Emaximum-Emedium)+Emedium;
+I2=C2*Emedium;
+ELowThreshold=max(I1,I2);
+EHighThreshold=C3*ELowThreshold;
+RTZsigma=sqrt((sum((RTZmedium-rtz(1:15)).^2))/(15*14));
+RTZthreshold = RTZmedium + 2*RTZsigma;
+
+%then we find the start and stop points
+i=1;
+k=0;p=0;
+start=0;
+stop=0;
+while i<lung_energ
+    if energie(i)>ELowThreshold
+    i=i+1;
+    while start==0;
+        k=k+1;
+        if energie(i)<ELowThreshold
+            k=0;
+        end
+        if energie(i)>EHighThreshold  
+            start=i-k-1;
+         
+      while stop==0;
+                 i=i+1;
+                 if energie(i)<EHighThreshold 
+                     p=p+1;
+                 else p=0;
+                 end
+                 if p==15 
+                    stop=i;
+                 end
+                 if i==lung_energ
+                     stop=i-1;
+                 end
+                end
+        end
+        i=i+1;
+    end
+    else i=i+1;
+    end
+
+    k=0;
+    if start~=0 
+        while rtz(start)>RTZthreshold 
+            start=start-1;
+        k=k+1;
+        if k==15
+            rtz(start)=1;
+        end
+        end
+    end
+    
+    k=0;
+    if stop~=0
+        while rtz(stop)>RTZthreshold
+            stop=stop+1;
+            k=k+1;
+        if k==15
+            rtz(stop)=1;
+        end
+        end
+    end
+end
+
+    
+index_start=start*220;
+index_stop=stop*220;
