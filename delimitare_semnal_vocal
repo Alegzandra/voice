@@ -88,3 +88,4 @@ end
     
 index_start=start*220;
 index_stop=stop*220;
+wavwrite(y(index_start:index_stop),Fs, 'cropped.wav')
