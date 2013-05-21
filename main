@@ -2,6 +2,6 @@ clear all;
 close all;
 clc
 
-delimitare_semnal_vocal('unSoldat.wav');
+delimitare_semnal_vocal('my_voice_signal.wav');
 crop=wavread('cropped.wav');
 figure(4), plot(crop), title('my cropped voice signal')
